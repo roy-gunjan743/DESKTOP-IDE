@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop IDE - Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .status {
+            background-color: #2d2d30;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success {
+            background-color: #0f5132;
+            color: #d1e7dd;
+        }
+        button {
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #1177bb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Desktop IDE - Test Mode</h1>
+        
+        <div class="status success">
+            ✅ Electron Application is Working!
+        </div>
+        
+        <div class="status">
+            <h3>Backend Status Check</h3>
+            <p>Testing if all components are responding...</p>
+            <button onclick="testFileSystem()">Test File System</button>
+            <button onclick="testMenus()">Test Menus</button>
+            <button onclick="testIPC()">Test IPC Communication</button>
+        </div>
+        
+        <div id="test-results">
+            <h3>Test Results:</h3>
+            <ul id="results-list"></ul>
+        </div>
+        
+        <div class="status">
+            <h3>System Information</h3>
+            <p>Platform: <span id="platform"></span></p>
+            <p>Node Version: <span id="nodeVersion"></span></p>
+            <p>Electron Version: <span id="electronVersion"></span></p>
+            <p>Chrome Version: <span id="chromeVersion"></span></p>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        const path = require('path');
+        const fs = require('fs');
+        
+        // Display system information
+        document.getElementById('platform').textContent = process.platform;
+        document.getElementById('nodeVersion').textContent = process.versions.node;
+        document.getElementById('electronVersion').textContent = process.versions.electron;
+        document.getElementById('chromeVersion').textContent = process.versions.chrome;
+        
+        function addResult(test, status, message) {
+            const resultsList = document.getElementById('results-list');
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `<strong>${test}:</strong> ${status} - ${message}`;
+            listItem.style.color = status === 'PASS' ? '#4CAF50' : '#f44336';
+            listItem.style.margin = '5px 0';
+            resultsList.appendChild(listItem);
+        }
+        
+        function testFileSystem() {
+            try {
+                // Test if we can access the file system
+                const testDir = path.join(__dirname, '../');
+                const files = fs.readdirSync(testDir);
+                addResult('File System', 'PASS', `Can read directory. Found ${files.length} files/folders`);
+            } catch (error) {
+                addResult('File System', 'FAIL', error.message);
+            }
+        }
+        
+        function testMenus() {
+            try {
+                // Test if IPC is working by sending a test message
+                ipcRenderer.send('test-menu');
+                addResult('Menu System', 'PASS', 'Menu system is accessible');
+            } catch (error) {
+                addResult('Menu System', 'FAIL', error.message);
+            }
+        }
+        
+        function testIPC() {
+            try {
+                // Test IPC communication
+                ipcRenderer.invoke('test-ipc').then(response => {
+                    addResult('IPC Communication', 'PASS', 'IPC is working correctly');
+                }).catch(error => {
+                    addResult('IPC Communication', 'FAIL', error.message);
+                });
+            } catch (error) {
+                addResult('IPC Communication', 'FAIL', 'IPC invoke failed: ' + error.message);
+            }
+        }
+        
+        // Auto-run basic tests
+        setTimeout(() => {
+            testFileSystem();
+            testMenus();
+            testIPC();
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop IDE</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <h3>Desktop IDE</h3>
+            </div>
+            <div class="sidebar-section">
+                <h4>File Explorer</h4>
+                <div id="file-tree">
+                    <div class="file-item">No files open</div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h4>Language Templates</h4>
+                <div class="language-buttons">
+                    <button class="lang-btn" data-lang="javascript">JavaScript</button>
+                    <button class="lang-btn" data-lang="python">Python</button>
+                    <button class="lang-btn" data-lang="java">Java</button>
+                    <button class="lang-btn" data-lang="cpp">C++</button>
+                    <button class="lang-btn" data-lang="csharp">C#</button>
+                    <button class="lang-btn" data-lang="html">HTML</button>
+                    <button class="lang-btn" data-lang="css">CSS</button>
+                    <button class="lang-btn" data-lang="json">JSON</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="main-content">
+            <div id="tab-bar">
+                <div class="tab active" data-file="welcome">
+                    <span class="tab-name">Welcome</span>
+                    <span class="tab-close">&times;</span>
+                </div>
+            </div>
+            
+            <div id="editor-container">
+                <div id="welcome-screen" class="editor-pane active">
+                    <div class="welcome-content">
+                        <h1>Welcome to Desktop IDE</h1>
+                        <p>A powerful code editor with multi-language support</p>
+                        <div class="quick-actions">
+                            <button id="new-file-btn" class="action-btn">New File</button>
+                            <button id="open-file-btn" class="action-btn">Open File</button>
+                        </div>
+                        <div class="language-grid">
+                            <h3>Start with a template:</h3>
+                            <div class="template-grid">
+                                <div class="template-card" data-lang="javascript">
+                                    <h4>JavaScript</h4>
+                                    <p>Modern JavaScript development</p>
+                                    <button class="download-btn">Download Template</button>
+                                </div>
+                                <div class="template-card" data-lang="python">
+                                    <h4>Python</h4>
+                                    <p>Python scripting and development</p>
+                                    <button class="download-btn">Download Template</button>
+                                </div>
+                                <div class="template-card" data-lang="java">
+                                    <h4>Java</h4>
+                                    <p>Enterprise Java applications</p>
+                                    <button class="download-btn">Download Template</button>
+                                </div>
+                                <div class="template-card" data-lang="cpp">
+                                    <h4>C++</h4>
+                                    <p>High-performance applications</p>
+                                    <button class="download-btn">Download Template</button>
+                                </div>
+                                <div class="template-card" data-lang="html">
+                                    <h4>HTML</h4>
+                                    <p>Web development</p>
+                                    <button class="download-btn">Download Template</button>
+                                </div>
+                                <div class="template-card" data-lang="csharp">
+                                    <h4>C#</h4>
+                                    <p>.NET applications</p>
+                                    <button class="download-btn">Download Template</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
+    <script>
+        // Set the base path for Monaco Editor
+        require.config({ 
+            paths: { 
+                'vs': '../node_modules/monaco-editor/min/vs' 
+            },
+            'vs/nls': {
+                availableLanguages: {
+                    '*': 'en'
+                }
+            }
+        });
+    </script>
+    <script src="renderer.js"></script>
+</body>
+</html>

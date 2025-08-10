@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop IDE - Simple Version</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #app {
+            display: flex;
+            height: 100vh;
+        }
+
+        #sidebar {
+            width: 250px;
+            background-color: #252526;
+            border-right: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .sidebar-header {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h3 {
+            color: #ffffff;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: #1177bb;
+        }
+
+        .template-section {
+            margin-top: 30px;
+        }
+
+        .template-section h4 {
+            color: #cccccc;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .template-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #2d2d30;
+            color: #d4d4d4;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .template-btn:hover {
+            background-color: #3e3e42;
+            border-color: #0e639c;
+        }
+
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #1e1e1e;
+        }
+
+        #toolbar {
+            background-color: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            padding: 10px 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toolbar-btn {
+            padding: 8px 12px;
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .toolbar-btn:hover {
+            background-color: #1177bb;
+        }
+
+        #tab-bar {
+            background-color: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            height: 35px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            height: 100%;
+            background-color: #2d2d30;
+            border-right: 1px solid #3e3e42;
+            cursor: pointer;
+            color: #969696;
+            font-size: 13px;
+            min-width: 120px;
+            position: relative;
+        }
+
+        .tab.active {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+        .tab:hover {
+            background-color: #3e3e42;
+        }
+
+        .tab-close {
+            margin-left: 8px;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .tab-close:hover {
+            background-color: #e81123;
+            opacity: 1;
+        }
+
+        #editor-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .editor-pane {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+        }
+
+        .editor-pane.active {
+            display: block;
+        }
+
+        .simple-editor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 20px;
+            tab-size: 4;
+        }
+
+        #welcome-screen {
+            padding: 40px;
+            text-align: center;
+        }
+
+        #welcome-screen h1 {
+            color: #ffffff;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        #welcome-screen p {
+            color: #cccccc;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .status-bar {
+            background-color: #007acc;
+            color: white;
+            padding: 5px 15px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 13px;
+            color: #cccccc;
+            margin-bottom: 2px;
+        }
+
+        .file-item:hover {
+            background-color: #2a2d2e;
+        }
+
+        .file-item.active {
+            background-color: #094771;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <h3>🚀 Desktop IDE</h3>
+                <button id="new-file-btn" class="action-btn">📄 New File</button>
+                <button id="open-file-btn" class="action-btn">📁 Open File</button>
+                <button id="save-file-btn" class="action-btn">💾 Save File</button>
+            </div>
+
+            <div class="template-section">
+                <h4>📋 Create Template:</h4>
+                <button class="template-btn" data-lang="javascript">JavaScript (.js)</button>
+                <button class="template-btn" data-lang="python">Python (.py)</button>
+                <button class="template-btn" data-lang="java">Java (.java)</button>
+                <button class="template-btn" data-lang="cpp">C++ (.cpp)</button>
+                <button class="template-btn" data-lang="html">HTML (.html)</button>
+                <button class="template-btn" data-lang="css">CSS (.css)</button>
+                <button class="template-btn" data-lang="json">JSON (.json)</button>
+            </div>
+
+            <div class="template-section">
+                <h4>📥 Download Template:</h4>
+                <button class="template-btn" id="download-js">⬇️ JavaScript</button>
+                <button class="template-btn" id="download-py">⬇️ Python</button>
+                <button class="template-btn" id="download-java">⬇️ Java</button>
+                <button class="template-btn" id="download-cpp">⬇️ C++</button>
+                <button class="template-btn" id="download-html">⬇️ HTML</button>
+            </div>
+
+            <div class="file-list">
+                <h4 style="color: #cccccc; margin-bottom: 10px; font-size: 12px;">📂 Open Files:</h4>
+                <div id="open-files-list"></div>
+            </div>
+        </div>
+        
+        <div id="main-content">
+            <div id="toolbar">
+                <button class="toolbar-btn" onclick="createNewFile()">New</button>
+                <button class="toolbar-btn" onclick="saveCurrentFile()">Save</button>
+                <button class="toolbar-btn" onclick="testFunction()">Test</button>
+                <span style="margin-left: auto; font-size: 12px; color: #cccccc;">Ready</span>
+            </div>
+
+            <div id="tab-bar">
+                <div class="tab active" data-file="welcome">
+                    <span class="tab-name">Welcome</span>
+                </div>
+            </div>
+            
+            <div id="editor-container">
+                <div id="welcome-screen" class="editor-pane active">
+                    <h1>Welcome to Desktop IDE</h1>
+                    <p>A simple, reliable code editor that actually works!</p>
+                    <div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px;">
+                        <button class="action-btn" onclick="createNewFile()" style="width: auto; padding: 15px 30px;">Start Coding</button>
+                        <button class="action-btn" onclick="testFunction()" style="width: auto; padding: 15px 30px;">Test Features</button>
+                    </div>
+                    
+                    <div style="margin-top: 40px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        <h3 style="color: #ffffff; margin-bottom: 15px;">✅ Working Features:</h3>
+                        <ul style="color: #cccccc; line-height: 1.8;">
+                            <li>✅ Create new files</li>
+                            <li>✅ Save files to disk</li>
+                            <li>✅ Open existing files</li>
+                            <li>✅ Multiple tabs</li>
+                            <li>✅ Language templates</li>
+                            <li>✅ Download templates</li>
+                            <li>✅ Simple code editor</li>
+                            <li>✅ File management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <span id="status-text">Ready - All features working</span>
+                <span id="file-info">Welcome | Desktop IDE</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="simple-renderer.js"></script>
+</body>
+</html>
